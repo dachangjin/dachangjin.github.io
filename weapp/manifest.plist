@@ -11,7 +11,7 @@
 					<key>kind</key>
 					<string>software-package</string>
 					<key>url</key>
-					<string>https://dachangjin.github.io/weapp/Weapps.ipa</string>
+					<string>https://dachangjin.github.io/weapp/app.ipa</string>
 				</dict>
 				<dict>
 					<key>kind</key>
@@ -29,7 +29,7 @@
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>com.tencent.weapps1</string>
+				<string>com.tencent.ponytest1</string>
 				<key>bundle-version</key>
 				<string>1.0.2</string>
 				<key>kind</key>
