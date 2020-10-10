@@ -29,7 +29,7 @@
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>com.tencent.ponytest1</string>
+				<string>cn.zhixl.testAutoPackage</string>
 				<key>bundle-version</key>
 				<string>1.0.2</string>
 				<key>kind</key>
@@ -37,7 +37,7 @@
 				<key>platform-identifier</key>
 				<string>com.apple.platform.iphoneos</string>
 				<key>title</key>
-				<string>androidSdk</string>
+				<string>众享安康</string>
 			</dict>
 		</dict>
 	</array>
