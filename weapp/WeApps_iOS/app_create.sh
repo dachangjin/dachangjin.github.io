@@ -947,10 +947,17 @@ function copyVendorToProject() {
     if [[ ! -d "$projectPath" ]]; then
         errorExit "${projectPath} 项目路径错误，请检查项目路径是否正确"
     fi
-    if [[ ! -f "$vendorPath" ]]; then
-        errorExit "${vendorPath} 三方库文件路径错误，请检查路径是否正确"
-    fi
-    unzip -o $vendorPath -d ${projectPath}/weapps/
+#    if [[ ! -f "$vendorPath" ]]; then
+#        errorExit "${vendorPath} 三方库文件路径错误，请检查路径是否正确"
+#    fi
+
+
+    local downloadPath="${publicPath}/Vendor.zip"
+
+    ## 下载vendor到本地
+    wget $vendorPath -O $downloadPath
+
+    unzip -o $downloadPath -d ${projectPath}/weapps/
     
     if [[ ! -d "${projectPath}/weapps/Vendor" ]]; then
         errorExit "${projectPath}/weapps/Vendor 解压三方库到项目中出错，请检查路径是否正确"
@@ -1205,6 +1212,9 @@ copyImageToAssert "$LAUNCH_IMAGE_PATH" "$PROJECT_PATH" "$PUBLIC_PATH"
 
 #下载广告资源到指定位置
 downloadAndCopySplashSource "$SPLASH_RESOURCE" "$PROJECT_PATH"
+
+## 解压第三方库到项目中
+copyVendorToProject "$VENDOR_PATH" "$PROJECT_PATH"
 
 copyH5File "$WEB_CODE_PATH" "$PROJECT_PATH"
 
