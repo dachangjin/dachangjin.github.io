@@ -944,6 +944,7 @@ function copyH5File() {
 function copyVendorToProject() {
     local vendorPath=$1
     local projectPath=$2
+    local publicPath=$3
     if [[ ! -d "$projectPath" ]]; then
         errorExit "${projectPath} 项目路径错误，请检查项目路径是否正确"
     fi
@@ -1214,7 +1215,7 @@ copyImageToAssert "$LAUNCH_IMAGE_PATH" "$PROJECT_PATH" "$PUBLIC_PATH"
 downloadAndCopySplashSource "$SPLASH_RESOURCE" "$PROJECT_PATH"
 
 ## 解压第三方库到项目中
-copyVendorToProject "$VENDOR_PATH" "$PROJECT_PATH"
+copyVendorToProject "$VENDOR_PATH" "$PROJECT_PATH" "$PUBLIC_PATH"
 
 copyH5File "$WEB_CODE_PATH" "$PROJECT_PATH"
 
