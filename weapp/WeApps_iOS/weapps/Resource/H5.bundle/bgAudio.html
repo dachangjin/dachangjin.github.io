@@ -1,0 +1,112 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <script src="./main.js"></script>
+</head>
+<body>
+    <h3>iOS本地 api测试</h3>
+
+  
+    <a href="javascript:playBGAudio();"  class="button">开始播放背景音乐</a>
+
+    <a href="javascript:playOrPauseBGAudio();"  class="button">播放/暂停</a>
+
+    <a href="javascript:stopBGAudio();" class="button">停止背景音乐</a>
+
+    <a href="javascript:forwardBGAudio();" class="button">前进10秒</a>
+
+    <a href="javascript:backBGAudio();" class="button">后退10秒</a>
+
+    <p id="loginResult">结果显示区域</p>
+
+    <script>
+
+        addOnEvents()
+
+        function playBGAudio(){
+            var param = {
+                title: "First Love",
+                epname: "First Love",
+                singer: "宇多田ヒカル",
+                coverImgUrl: "https://y.gtimg.cn/music/photo_new/T002R300x300M000000FxLzs1mhqmA.jpg?max_age=2592000",
+                src: "http://ws.stream.qqmusic.qq.com/C400000tEmig4VEnnn.m4a?guid=8525703334&vkey=E728AC0ADC98218FF3816A68BB0BC4883D83A02F361EB160EFF9A8076BE1E52620B2857874B55A45BAF7A3ABCC1C14508165BBE7749FF148&uin=3740&fromtag=66"
+            }
+            window.__weappsNative.setBackgroundAudioState(JSON.stringify(param))
+        }
+
+        function playOrPauseBGAudio(){
+            let info = JSON.parse(window.__weappsNative.getBackgroundAudioState())
+            let isPaused = info.paused
+            let operate = isPaused ? "play" : "pause"
+            var params = {
+                operationType: operate
+            }
+            window.__weappsNative.operateBackgroundAudio(JSON.stringify(params))
+        }
+
+        function stopBGAudio(){
+            var params = {
+                operationType: "stop"
+            }
+            window.__weappsNative.operateBackgroundAudio(JSON.stringify(params))
+        }
+
+        function forwardBGAudio() {
+            let info = window.__weappsNative.getBackgroundAudioState()
+            var position = JSON.parse(info).currentTime
+            seekBGAudio(position + 10)
+
+        }
+
+        function backBGAudio() {
+            
+            var position = JSON.parse(window.__weappsNative.getBackgroundAudioState()).currentTime
+            seekBGAudio(position - 10)
+
+        }
+
+        function seekBGAudio(position) {
+            var params = {
+                operationType: "seek",
+                position:position
+            }
+            window.__weappsNative.operateBackgroundAudio(JSON.stringify(params))
+        }
+
+        function addOnEvents() {
+            var callbackName = getCallbackName(callBack);
+            addOnEvent("onCanplay",callbackName)
+            addOnEvent("onWaiting", callbackName)
+            // addOnEvent("onTimeUpdate", callbackName)
+            addOnEvent("onStop", callbackName)
+            addOnEvent("onSeeking", callbackName)
+            addOnEvent("onSeeked", callbackName)
+            addOnEvent("onPlay", callbackName)
+            addOnEvent("onNext",callbackName)
+            addOnEvent("onPrev", callbackName)
+            addOnEvent("onPause", callbackName)
+            addOnEvent("onError", callbackName)
+            addOnEvent("onEnded", callbackName)
+        }
+
+
+        function addOnEvent(operationType,callback) {
+            var onStartParams = {
+                operationType: operationType,
+                callback: callback
+            }
+            window.__weappsNative.operateBackgroundAudio(JSON.stringify(onStartParams));
+        }
+    </script>
+    
+    
+</body>
+</html>

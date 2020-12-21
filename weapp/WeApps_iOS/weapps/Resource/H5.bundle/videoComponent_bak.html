@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <!-- <link rel="stylesheet" href="./reset.css"> -->
+    
+    
+</head>
+<body>
+  <h3>iOS本地 video组件测试</h3>
+
+  <div id="app">
+
+  </div>
+
+  <script src="./react/react.development.js"></script>
+  <script src="./react/react-dom.development.js"></script>
+  <script src="./react/babel.min.js"></script>
+  
+  <script type="text/babel">
+
+    function PolygonView() {
+      return (
+        <div className="topView">
+          <button
+            onClick={e=> console.log()}
+            style={{width: 60,height: 40}}
+          >点击我</button>
+          <span>
+            此为webView的dom节点，覆盖到同层渲染原生view上面
+          </span>
+        </div>
+      )
+    }
+
+    function Controls(props) {
+      const params = {
+        data:{
+          videoId:props.videoId,
+          operationType:"sendDanmu",
+          text:"测试弹幕",
+          color:"#ff0000"
+        }
+      }
+      return (
+        <div>
+          <a onClick={
+                e=>{
+                  window.__weappsNative.operateVideoContext(JSON.stringify(params))
+                }
+              }
+              className="button">发送弹幕</a>
+        </div>
+      )
+    }
+     
+    class Video extends React.Component {
+
+      constructor(props){
+        super(props)
+        this.state = {
+        }
+        this.btnClick = this.btnClick.bind(self)
+        this.selfRef = React.createRef()
+        this.childrenRef = React.createRef()
+      }
+
+      render() {
+
+        let { style } = this.props;
+
+        return (
+            <div ref={this.selfRef} style={{...style,overflow:"scroll"}}>
+              <div id="scrollContent" style={{width: "100%",height: "101%"}}>
+                <div ref={this.childrenRef}>
+                  {this.props.children}
+                </div>
+              </div>
+          </div>
+        )
+      }
+
+      componentDidMount() {
+
+        const childrenDom = this.childrenRef.current
+        const rect = this.selfRef.current.getBoundingClientRect()
+        let state = {}
+        for (const key in this.props) {
+          if (key === "children") continue
+          if (this.props.hasOwnProperty(key)) {
+            const element = this.props[key];
+            state[key] = element;
+          }
+        }
+        const args = {
+          data: {
+            videoId: this.props.id,
+            position: rect,
+            state: state,
+            childrenPosition:{
+              "left"  :childrenDom.offsetLeft,
+              "top"   :childrenDom.offsetTop,
+              "width" :childrenDom.offsetWidth,
+              "height":childrenDom.offsetHeight
+            }
+          }
+        }
+        setTimeout(() => {
+          window.__weappsNative.createVideoContext(JSON.stringify(args))
+        }, 100);
+      }
+
+      btnClick(){
+        console.log("buttonClick")
+      }
+    }
+
+    const danmuList = [
+      {
+        text: '第 1s 出现的弹幕',
+        color: '#ff0000',
+        time: 1
+      },
+      {
+        text: '第 3s 出现的弹幕',
+        color: '#ff00ff',
+        time: 3
+      },
+      {
+        text: '第 10s 出现的弹幕',
+        color: '#ff00ff',
+        time: 10
+      }
+   ]
+
+   
+   function App() {
+     return (
+       <div>
+        <Video
+        id="myVideo"
+        poster="http://1252463788.vod2.myqcloud.com/95576ef5vodtransgzp1252463788/e1ab85305285890781763144364/1536584350_1812858038.100_0.jpg"
+        style={{width: "100%",height: 300,position:"relative"}}
+        src="http://1252463788.vod2.myqcloud.com/95576ef5vodtransgzp1252463788/e1ab85305285890781763144364/v.f20.mp4"
+        autoplay={true}
+        // loop={true}
+        initialTime={5}
+        // pageGesture={true}
+        vslideGesture={true}
+        vslideGestureInFullscreen={false}
+        enablePlayGesture={true}
+        // showPlayBtn={false}
+        // showCenterPlayBtn={false}
+        // showFullScreenBtn={false}
+        // enableProgressGesture={false}
+        showScreenLockButton={false}
+        showSnapshotButton={true}
+        showMuteBtn={true}
+        title="腾讯云"
+        danmuList={danmuList}
+        // enableDanmu={true}
+        danmuBtn={true}
+        >
+          <PolygonView/>
+        </Video>
+        <Controls videoId="myVideo"/>
+       </div>
+     );
+   }
+   
+
+    ReactDOM.render(<App/>, document.getElementById("app"));
+
+  </script>
+    
+    
+</body>
+</html>

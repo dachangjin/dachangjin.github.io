@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <script src="./main.js"></script>
+</head>
+<body>
+    <h3>iOS本地 api测试</h3>
+
+    
+    <a href="javascript:chooseVideoToDecode();"  class="button">从相册选择视频解码</a>
+
+    <a href="javascript:getFrameData();"  class="button">获取下一帧</a>
+    <a href="javascript:seekTo();"  class="button">转跳</a>
+
+    <a href="javascript:stop();"  class="button">停止</a>
+
+
+    <p id="loginResult">结果显示区域</p>
+    
+    <img src="" alt="" class="icon" id="img">
+
+    <script>
+        let decoder = null;
+        let position = 1000;
+
+        function chooseVideoToDecode() {
+            var callbackName = getCallbackName(onDecode);
+            var params = {
+                callback: callbackName,
+                data: {
+                    sourceType: ["album"],
+                    maxDuration: 10
+                }
+            }
+            window.__weappsNative.chooseVideo(JSON.stringify(params))  
+        }
+
+        function addOnEvents() {
+            var callbackName = getCallbackName(callBack);
+            addOnEvent("start", callbackName)
+            addOnEvent("stop", callbackName)
+            addOnEvent("seek", callbackName)
+            addOnEvent("bufferchange", callbackName)
+            addOnEvent("ended", callbackName)
+        }
+
+        function onDecode(err,res){
+            res = JSON.parse(res)
+            decoder = window.__weappsNative.createVideoDecoder()
+            addOnEvents()
+            position = 1000
+
+            var params = {
+                identifier: decoder,
+                operationType: "start",
+                source: res.tempFilePath
+            }
+            window.__weappsNative.operateVideoDecoder(JSON.stringify(params));
+        }
+
+        function getFrameData(){
+            var params = {
+            identifier: decoder
+            }
+            let result = window.__weappsNative.getFrameData(JSON.stringify(params));
+            var p = document.getElementById('loginResult');
+            p.innerText = result; 
+            // setInterval(() => {
+            //     var params = {
+            //     identifier: decoder
+            //     }
+            //     let result = window.__weappsNative.getFrameData(JSON.stringify(params));
+            //     var p = document.getElementById('loginResult');
+            //     p.innerText = result; 
+            // }, 10);
+        }
+
+        function seekTo() {
+            var params = {
+                identifier: decoder,
+                operationType: "seek",
+                position:position
+            }
+            position += 1000
+            window.__weappsNative.operateVideoDecoder(JSON.stringify(params));
+        }
+
+        function stop(){
+            var params = {
+                identifier: decoder,
+                operationType: "stop",
+            }
+            window.__weappsNative.operateVideoDecoder(JSON.stringify(params));
+        }
+
+        function addOnEvent(eventName,callback) {
+            var onStartParams = {
+                identifier: decoder,
+                operationType: "on",
+                eventName: eventName,
+                callback: callback
+            }
+            window.__weappsNative.operateVideoDecoder(JSON.stringify(onStartParams));
+        }
+
+    </script>
+</body>
+</html>

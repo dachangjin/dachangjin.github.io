@@ -1,0 +1,61 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <script src="./main.js"></script>
+</head>
+<body>
+    <h3>iOS本地 api测试</h3>
+
+  
+    <a href="javascript:startDeviceMotion();"  class="button">开始监听设备方向变化</a>
+
+    <a href="javascript:stopDeviceMotion();" class="button">结束监听设备方向变化</a>
+
+    <a href="javascript:onDeviceMotionChange();" class="button">添加监听回调</a>
+
+    <a href="javascript:offDeviceMotionChange();" class="button">删除监听回调</a>
+
+    <p id="loginResult">结果显示区域</p>
+
+    <script>
+        var callbackName = getCallbackName(callBack)
+        function startDeviceMotion() {
+            let params = {
+                callback: callbackName,
+                interval: "game"
+            }
+            window.__weappsNative.startDeviceMotionListening(JSON.stringify(params))
+        }
+
+        function stopDeviceMotion(){
+            let params = {
+                callback: callbackName
+            }
+            window.__weappsNative.stopDeviceMotionListening(JSON.stringify(params))
+        }
+
+        function onDeviceMotionChange() {
+            let params = {
+                callback: callbackName
+            }
+            window.__weappsNative.onDeviceMotionChange(JSON.stringify(params))
+        }
+
+        function offDeviceMotionChange() {
+            let params = {
+                callback: callbackName
+            }
+            window.__weappsNative.offDeviceMotionChange(JSON.stringify(params))
+        }
+    </script>
+  
+</body>
+</html>

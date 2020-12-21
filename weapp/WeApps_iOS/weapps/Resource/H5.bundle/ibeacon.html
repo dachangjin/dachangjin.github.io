@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <!-- <link rel="stylesheet" href="./reset.css"> -->
+    <script src="./main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+<body>
+    <h3>iOS本地 api测试</h3>
+
+
+    <div id="app">
+
+
+    <input type="text" placeholder="uuid" v-model="UUID">
+    
+    <a @click="startDiscovery" class="button">开始搜索</a>
+
+    <a @click="stopDiscovery" class="button">停止搜索</a>
+
+
+    <span class="loginResult"></span>
+        
+    <ul class="list" v-if="devices!=null">
+        <li v-for="(device, index) in devices" :key="index">
+            <span class="title">UUID:{{device.uuid}}</span>
+            <span class="info">major:{{device.major}}</span>
+            <span class="info">minor:{{device.minor}}</span>
+            <span class="info">accuracy:{{device.accuracy}}</span>
+            <span class="info">rssi:{{device.rssi}}</span>
+            <div class="line"></div>
+        </li>
+    </ul>
+
+    </div>  
+
+    <script>
+        let app = new Vue({
+            el:"#app",
+            data:{
+                devices:null,
+                UUID:""
+            },
+            mounted() {
+                let params = {
+                    callback:"onBeaconUpdate"
+                }
+                window.__weappsNative.onBeaconUpdate(JSON.stringify(params))
+                this.createCallback("onBeaconUpdate")
+            },
+            methods: {
+              startDiscovery(){
+                let params = {
+                  data : {
+                    uuids:[this.UUID],
+                    ignoreBluetoothAvailable: false
+                  }
+                }
+                window.__weappsNative.startBeaconDiscovery(JSON.stringify(params))
+              },
+              stopDiscovery(){
+                window.__weappsNative.stopBeaconDiscovery()
+              },
+              onBeaconUpdate(err,res) {
+                this.devices = JSON.parse(res).beacons
+              },
+              createCallback(callback){
+                  window[callback] = (err,res) =>{
+                      this[callback](err,res)
+                  }
+              }
+            },
+        })
+
+
+
+    </script>
+    
+    
+</body>
+</html>

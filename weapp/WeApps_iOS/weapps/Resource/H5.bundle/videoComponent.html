@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <!-- <link rel="stylesheet" href="./reset.css"> -->
+    
+    
+</head>
+<body>
+  <h3>iOS本地 video组件测试</h3>
+
+  <div id="app">
+
+  </div>  
+
+  <script src="./react/react.development.js"></script>
+  <script src="./react/react-dom.development.js"></script>
+  <script src="./react/babel.min.js"></script>
+  
+  <script type="text/babel">
+
+    function PolygonView() {
+      return (
+        <div style={{backgroundColor:"red",height:100}}>
+          <button
+            onClick={e=> console.log()}
+            style={{width: "100%",height: 40}}
+          >点击我</button>
+        </div>
+      )
+    }
+
+    class Video extends React.Component {
+      constructor(props){
+        super(props)
+        this.selfRef = React.createRef()
+        this.childrenRef = React.createRef()
+      }
+
+      render() {
+        let { style } = this.props;
+        return (   
+          <div style={{position:"relative"}}>
+            <div ref={this.selfRef} style={{...style,overflow:"scroll", backgroundColor:"red"}}>
+              {/* 若子节点大小小于scroll节点，客户端不会生成WKChildScrollView */}
+              <div id="scrollContent" style={{width: "100%",height: "101%", backgroundColor:"blue"}}>
+              </div>
+            </div>
+            <div style={{position:"absolute", top:0, left:0, bottom:0, right:0}}>
+              <div ref={this.childrenRef}>
+                {this.props.children} 
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      componentDidMount() {
+        const childrenDom = this.childrenRef.current
+        const rect = this.selfRef.current.getBoundingClientRect()
+        let state = {...this.props}
+        state.children = null
+        const args = {
+          data: {
+            videoId: this.props.id,   //video组件id
+            position: rect,           //WKChildScrollView对于webView的rect
+            state: state,             //video组件的一些属性
+            childrenPosition:{        //子节点位置范围
+              "left"  :childrenDom.offsetLeft,
+              "top"   :childrenDom.offsetTop,
+              "width" :childrenDom.offsetWidth,
+              "height":childrenDom.offsetHeight
+            }
+          }
+        }
+        // componentDidMount 只是节点挂载完成，但在webView中还没有生成对应的WKChildScrollView 
+        setTimeout(() => {
+          // 调用本地接口寻找生成的WKChildScrollView，并将本地video组件挂载到WKChildScrollView上面
+          window.__weappsNative.createVideoContext(JSON.stringify(args))
+        }, 100);
+      }
+    }
+
+   
+    function App() {
+      return (
+        <Video 
+        id="myVideo" 
+        poster="http://1252463788.vod2.myqcloud.com/95576ef5vodtransgzp1252463788/e1ab85305285890781763144364/1536584350_1812858038.100_0.jpg" 
+        style={{width: "100%",height: 300, backgroundColor:"red"}} 
+        src="http://1252463788.vod2.myqcloud.com/95576ef5vodtransgzp1252463788/e1ab85305285890781763144364/v.f20.mp4"
+        autoplay={true}
+        // loop={true}
+        initialTime={5}
+        // pageGesture={true}
+        vslideGesture={true}
+        vslideGestureInFullscreen={false}
+        enablePlayGesture={true}
+        // showPlayBtn={false}
+        // showCenterPlayBtn={false}
+        // showFullScreenBtn={false}
+        // enableProgressGesture={false}
+        showScreenLockButton={false}
+        showSnapshotButton={true}
+        showMuteBtn={true}
+        title="腾讯云"
+        // enableDanmu={true}
+        danmuBtn={true}
+        >
+          <PolygonView/>
+        </Video>   
+      );
+    }
+   
+    ReactDOM.render(<App/>, document.getElementById("app"));
+
+  </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <script src="./main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <h3>iOS voip-room组件同层渲染测试</h3>
+
+    <div id="app">
+
+      <div v-if="users.length>0" style="width: 100%; height: 500px;">
+        <template v-for="(openid, index) in users" >
+          <!-- <span>{{openid}}</span> -->
+          <voip-room :key="openid" :openid="openid" :mode="openid===userId ?  'camera' : 'video'" style="width: 100%; height: 300px;"></voip-room>
+        </template>
+      </div>
+      
+      <input type="text" placeholder="房间号" v-model="roomId">
+
+      <input type="text" placeholder="用户id" v-model="userId">
+
+      
+      <a @click="joinRoom" class="button">加入房间</a>
+
+      <a @click="leaveRoom" class="button">离开房间</a>
+
+    </div>
+
+    <template id="voipRoom">
+      <div style="overflow: scroll; ">
+        <div style="width: 101%; height: 101%;"></div>
+      </div>
+    </template>
+  <script>
+
+    const component = Vue.extend({
+      template: "#voipRoom",
+      props: {
+        mode: {
+          type: String,
+          default: "camera"
+        },
+        openid: {
+          type: String,
+          default: ""
+        },
+        devicePosition: {
+          type: String,
+          default: "front"
+        },
+        binderror: {
+          type: String,
+          defaut:""
+        }
+      },
+      data() {
+        return {
+
+        }
+      },
+      created() {
+        console.log("created")
+      },
+      mounted() {
+        console.log("mounted")
+        
+        setTimeout(() => {
+          var params = {
+          userId:this.openid,
+          position: this.$el.getBoundingClientRect(),
+          mode: this.mode,
+          devicePosition: this.devicePosition,
+        }
+          console.log(params)
+          this.createVoIPRoom(params)
+        }, 1000);
+      },
+      methods: {
+        createVoIPRoom(params){
+          let p = {
+            data : params
+          }
+          window.__weappsNative.createVoIPRoom(JSON.stringify(p))
+        }
+      },
+    })
+
+    Vue.component('voip-room', component)
+
+    let app = new Vue({
+      el: "#app",
+      data: {
+        users:[],
+        userId:"",
+        roomId:""
+      },
+      mounted() {
+        this.createCallback("onJoin")
+        this.createCallback("onLeaveRoom")
+        let params = {
+          callback:"onJoin"
+        }
+        window.__weappsNative.onVoIPChatMembersChanged(JSON.stringify(params))
+      },
+      methods: {
+        joinRoom: function(){
+          let params = {
+            callback:"onJoin",
+            data: {
+              roomType: "video",
+              groupId:this.roomId,
+              userId:this.userId
+            }
+          }
+          window.__weappsNative.joinVoIPChat(JSON.stringify(params))
+        },
+        // onMemberChange(err,res){
+        //   es = JSON.parse(res)
+        //   this.users = res.openIdList
+        // },
+        onJoin(err,res){
+          res = JSON.parse(res)
+          this.users = res.openIdList
+          console.log(this.users)
+        },
+        onLeaveRoom(err, res){
+          this.users = []
+        },
+        leaveRoom: function() {
+          let params = {
+            callback:"onLeaveRoom"
+          }
+          window.__weappsNative.exitVoIPChat(JSON.stringify(params))
+        },
+        createCallback(callback){
+            window[callback] = (err,res) =>{
+                this[callback](err,res)
+            }
+        }
+      },
+      destroyed() {
+        
+      },
+    })
+
+  </script>
+</body>
+</html>

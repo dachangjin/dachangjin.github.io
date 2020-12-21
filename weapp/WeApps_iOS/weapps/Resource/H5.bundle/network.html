@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <script src="./main.js"></script>
+</head>
+<body>
+    <h3>iOS本地 api测试</h3>
+
+    
+
+    <a href="javascript:request();" class="button">请求网络数据，并监听</a>
+
+    <a href="javascript:downloadFile();" class="button">下载文件并监听</a>
+    
+    <a href="javascript:takePhoto();" class="button">拍照并上传</a>
+
+
+    <a href="javascript:clear();" class="button">清除</a>
+
+
+
+
+    <p id="">进度区域</p>
+    <p id="progressResult"></p>
+    <div class="line"></div>
+
+    <p id="">header区域</p>
+    <p id="headerResult"></p>
+    <div class="line"></div>
+
+    <p id="">请求数据区域</p>
+    <p id="dataResult"></p>
+    
+    
+    
+    
+    
+
+
+
+<script>
+
+function clear (){
+    document.getElementById('dataResult').innerText = '';
+    document.getElementById('headerResult').innerText = '';
+    document.getElementById('progressResult').innerText = '';
+
+}
+
+function request() {
+    var callbackName = getCallbackName((err, res)=>{
+        if (err === 'null') {
+            document.getElementById('dataResult').innerText = res
+        } else {
+            document.getElementById('dataResult').innerText = err;
+        }
+    });
+
+    var params = {
+        callback: callbackName,
+        data: {
+            url: 'http://t.weather.sojson.com/api/weather/city/101220101'
+        }
+    }
+    var taskId = window.__weappsNative.request(JSON.stringify(params));
+    onRequestHeadersReceived(taskId,'requestTask')
+}
+
+function onRequestHeadersReceived(taskId,type) {
+    var callbackName = getCallbackName((err, res)=>{
+        document.getElementById('headerResult').innerText = res
+    });
+
+    var params = {
+        callback: callbackName,
+        data:{
+            type:type,
+            identifier:taskId
+        }
+    }
+     window.__weappsNative.onHeadersReceived(JSON.stringify(params));
+}
+
+function progressUpdate(err, res) {
+    document.getElementById('progressResult').innerText = res
+}
+
+
+function onProgressUpdate(taskId,type) {
+
+    var params = {
+        callback: 'progressUpdate',
+        data:{
+            type:type,
+            identifier:taskId
+        }
+    }
+     window.__weappsNative.onProgressUpdate(JSON.stringify(params));
+}
+
+function downloadFile() {
+    var callbackName = getCallbackName((err, res)=>{
+        if (err === 'null') {
+            document.getElementById('dataResult').innerText = res
+        } else {
+            document.getElementById('dataResult').innerText = err;
+        }
+    });
+
+    var params = {
+        callback: callbackName,
+        data: {
+            url: 'http://dldir1.qq.com/invc/tt/QTB/Wechat_QQBrowser_Setup.exe'
+        }
+    }
+    var taskId = window.__weappsNative.downloadFile(JSON.stringify(params));
+    onRequestHeadersReceived(taskId,'downloadTask')
+    onProgressUpdate(taskId,'downloadTask');
+
+}
+
+function takePhoto() {
+    var callbackName = getCallbackName(takePhotoDone);
+
+    var params = {
+        callback: callbackName,
+        data: {
+            sourceType: ["camera"],
+            count: 3
+        }
+    }
+    window.__weappsNative.chooseImage(JSON.stringify(params));
+}
+
+
+function takePhotoDone(err,res) {
+    res = JSON.parse(res);
+    var path = res.tempFilePaths[0];
+
+    var params = {
+        url:"https://httpbin.org/post",
+        filePath:path,
+        name:"file"
+    };
+
+    window.__weappsNative.uploadFile(JSON.stringify(params));
+
+}
+
+
+</script>
+
+
+
+    
+</body>
+</html>

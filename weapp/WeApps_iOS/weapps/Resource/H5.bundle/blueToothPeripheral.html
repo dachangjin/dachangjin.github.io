@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <!-- <link rel="stylesheet" href="./reset.css"> -->
+    <script src="./main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+<body>
+    <h3>iOS本地 api测试</h3>
+
+    <div id="app">
+
+    <a @click="addService" class="button">添加服务</a>
+
+    <a @click="startAdvertising" class="button">开始广播</a>
+
+    <a @click="stopAdvertising" class="button">停止广播</a>
+
+    <span class="loginResult"></span>
+
+    </div>  
+
+    <script>
+
+
+        let app = new Vue({
+            el:"#app",
+            data:{
+              peripheralServerId:null
+            },
+            mounted() {
+                let params = {
+                    callback:"onCreateBLEPeripheralServer"
+                }
+                this.createCallback("onCreateBLEPeripheralServer")
+                window.__weappsNative.createBLEPeripheralServer(JSON.stringify(params))
+                
+            },
+            methods: {
+                addService(){
+                    let params = {
+                      data : {
+                        identifier: this.peripheralServerId,
+                        operationType: "addService",
+                        service: {
+                          uuid: "96107A37-FB46-4FBA-B42C-9A897C3A91B1",
+                          characteristics: [
+                            {
+                              uuid:"503DC307-FE1F-40E6-9184-ECBF941B88A9",
+                              properties: {
+                                write: true,
+                                read: true,
+                                notify: true,
+                                indicate: true
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                    window.__weappsNative.operateBLEPeripheralServer(JSON.stringify(params))
+                },
+                startAdvertising(){
+                    let params = {
+                      data : {
+                        identifier: this.peripheralServerId,
+                        operationType: "startAdvertising",
+                        advertiseRequest: {
+                          deviceName: "test peripheral",
+                          serviceUuids: [
+                            "96107A37-FB46-4FBA-B42C-9A897C3A91B1"
+                          ]
+                        }
+                      }
+                    }
+                    window.__weappsNative.operateBLEPeripheralServer(JSON.stringify(params))
+                },
+                stopAdvertising(){
+                  let params = {
+                      data : {
+                        identifier: this.peripheralServerId,
+                        operationType: "stopAdvertising",
+                      }
+                    }
+                    window.__weappsNative.operateBLEPeripheralServer(JSON.stringify(params))
+                },
+                onCreateBLEPeripheralServer(err,res){
+                    if (res) {
+                      this.peripheralServerId = JSON.parse(res).server
+                      let params = {
+                          callback:"onReceiceReadRequest",
+                          data:{
+                            identifier: this.peripheralServerId,
+                            operationType: "onCharacteristicReadRequest"
+                          }  
+                      }
+                      this.createCallback("onReceiceReadRequest")
+                      window.__weappsNative.operateBLEPeripheralServer(JSON.stringify(params))
+
+                      params = {
+                          callback:"onCharacteristicWriteRequest",
+                          data:{
+                            identifier: this.peripheralServerId,
+                            operationType: "onCharacteristicWriteRequest"
+                          }  
+                      }
+                      this.createCallback("onCharacteristicWriteRequest")
+                      window.__weappsNative.operateBLEPeripheralServer(JSON.stringify(params))
+                    }
+                },
+                onReceiceReadRequest(err,res){
+                    if(res){
+                      res = JSON.parse(res)
+                      res.value = "ddd"
+                      res.needNotify = true
+                      res.identifier = this.peripheralServerId,
+                      res.operationType = "writeCharacteristicValue"
+                      let params = {
+                        data:res
+                      }
+                      window.__weappsNative.operateBLEPeripheralServer(JSON.stringify(res))
+                    }
+                },
+                onCharacteristicWriteRequest(err,res) {
+                    if(res){
+                      res = JSON.parse(res)
+                      res.needNotify = true
+                      res.identifier = this.peripheralServerId,
+                      res.operationType = "writeCharacteristicValue"
+                      let params = {
+                        data:res
+                      }
+                      window.__weappsNative.operateBLEPeripheralServer(JSON.stringify(res))
+                    }
+                },
+                createCallback(callback){
+                    window[callback] = (err,res) =>{
+                        this[callback](err,res)
+                    }
+                }
+            },
+        })
+
+
+
+    </script>
+    
+    
+</body>
+</html>

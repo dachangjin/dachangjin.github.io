@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <script src="./main.js"></script>
+</head>
+<body>
+    <h3>iOS本地 api测试</h3>
+
+    <a href="javascript:getScreenHeight();" class="button">获取屏幕高度</a>
+
+    <a href="javascript:getScreenWidth();"  class="button">获取屏幕宽度</a>
+
+    <a href="javascript:getSimOperatorName();" class="button">获取运营商名称</a>
+
+    <a href="javascript:telCall();"  class="button">打电话</a>
+
+    <a href="javascript:smsTo();"  class="button">发短信</a>
+
+    <a href="javascript:emailTo();"  class="button">发邮件</a>
+
+    <a href="javascript:hasSimCard();"  class="button">是否包含sim卡</a>
+
+    <a href="javascript:getClipboardData();"  class="button">获取剪切板内容</a>
+
+    <a href="javascript:setClipboardData();"  class="button">设置剪切板内容</a>
+
+    <a href="javascript:getBatteryLevel();"  class="button">获取电池电量</a>
+
+    <a href="javascript:addCalendarEvent();"  class="button">插入日程表</a>
+
+    <a href="javascript:getDeviceId();"  class="button">获取设备ID</a>
+
+    <a href="javascript:getOSVersionCode();"  class="button">获取系统版本</a>
+
+    <a href="javascript:getDeviceType();"  class="button">获取手机型号</a>
+
+    <a href="javascript:getSystemInfo();"  class="button">获取系统信息</a>
+
+
+    <a href="javascript:getSystemFreeSize();"  class="button">获取系统剩余空间</a>
+    
+    <a href="javascript:reverseWebView();"  class="button">反转webView</a>
+
+    <a href="javascript:setConfig();" class="button">设置tabBar和naviBar</a>
+
+
+    <p id="loginResult">结果显示区域</p>
+
+<script>
+    
+function reverseWebView(){
+    window.__weappsNative.reverseWebView();
+}
+
+function setConfig(){
+
+var params = {
+    data: {
+        window: {
+            navigationBarBackgroundColor: "#eeeeee",
+            navigationBarTextStyle: "black",
+            navigationBarTitleText: "微信接口功能演示",
+            backgroundColor: "#00ff00",
+            backgroundTextStyle: "light"
+        },
+        tabBar: {
+            color: '#888888',
+            selectedColor: '#108EE9',
+            backgroundColor: '#f4f4f4',
+            position: 'bottom',
+            list: [
+                {
+                    pagePath: "pages/index/index",
+                    text: "首页",
+                    iconPath: "https://weapps-prod-1301730524.cos.ap-guangzhou.myqcloud.com/res/images/PjEjtGrAtc.png",
+                    selectedIconPath: "https://weapps-prod-1301730524.cos.ap-guangzhou.myqcloud.com/res/images/Iq3Y0iw7U_.png"
+                },
+                {
+                    pagePath: "pages/logs/logs",
+                    text: "日志",
+                    iconPath: "https://weapps-prod-1301730524.cos.ap-guangzhou.myqcloud.com/res/images/PjEjtGrAtc.png",
+                    selectedIconPath: "https://weapps-prod-1301730524.cos.ap-guangzhou.myqcloud.com/res/images/Iq3Y0iw7U_.png"
+                }
+            ]
+        },
+    }
+}
+window.__weappsNative.setConfig(JSON.stringify(params));
+}
+</script>
+  
+</body>
+</html>

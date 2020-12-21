@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="./main.css">
+    <script src="./main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <h3>iOS map组件同层渲染</h3>
+
+    <div id="app">
+
+      <my-map ref="my-map" style="width: 100%; height: 300px;" >
+      </my-map>
+
+      <a @click="moveMarker" class="button">移动标注</a>
+      <a @click="moveAlong" class="button">沿指定路径移动</a>
+
+    </div>
+
+    <template id="myMap">
+      <div style="overflow: scroll; ">
+        <div style="width: 101%; height: 101%;">
+          <div style="height:100px; width:100%; background-color:red;">
+            <button style="height:40px; width:80px; ">点击我</button>
+          </div>
+        </div>
+      </div>
+    </template>
+  <script>
+
+    const component = Vue.extend({
+      template: "#myMap",
+      props: {
+        mapId:{
+          type: String,
+          default: ()=>"myMap"
+        },
+        longitude: {
+          type: Number,
+          default: 116.316515,
+        },
+        latitude: {
+          type: Number,
+          default: 39.984083,
+        },
+        scale: {
+          type: Number,
+          default: 16
+        },
+        minScale:{
+          type:Number,
+          default:3
+        },
+        maxScale:{
+          type:Number,
+          default:20
+        },
+        markers: {
+          type: Array,
+          defaut: ()=>[]
+        },
+        covers: {
+          type: Array,
+          default:()=>[]
+        },
+        polyline:{
+          type: Array,
+          default:()=>[]
+        },
+        circles:{
+          type:Array,
+          default:()=>[]
+        },
+        showLocation :{
+          type: Boolean,
+          default: false
+        },
+        polygons: {
+          type: Array,
+          default:()=>[]
+        },
+        rotate: {
+          type: Number,
+          default: 0
+        },
+        skew: {
+          type: Number,
+          default: 0
+        }
+      },
+      data() {
+        return {
+          
+        }
+      },
+      created() {
+        console.log("created")
+      },
+      mounted() {
+        const markers = [
+          {
+            latitude: 23.099994,
+            longitude: 113.344520,
+            iconPath: '/location.png',
+            width:25,
+            height:25,
+            title: 'T.I.T 创意园',
+          },
+          {
+            id: 1,
+            latitude: 39.984083,
+            longitude: 116.316515,
+            callout:{
+              borderRadius:5,
+              borderWidth:2,
+              borderColor:"#FF0000",
+              content:"这是callout这是callout这这是call这",
+              color:"#ffffff",
+              textAlign:"center",
+              fontSize:12,
+              padding:10,
+              bgColor:"#000000",
+              anchorX:20,
+            },
+            label:{
+              borderRadius:5,
+              borderWidth:2,
+              borderColor:"#FF0000",
+              textAlign:"center",
+              content:"callout这",
+              color:"#000000",
+              fontSize:14,
+              padding:10,
+              bgColor:"#ffffff"
+            }
+          }]
+        const polyline = [
+          {
+            points:[
+              
+              {
+                latitude: 23.098494,
+                longitude: 113.304520,
+              },
+              {
+                latitude: 23.099894,
+                longitude: 113.324520,
+              }
+              ,{
+                latitude: 23.099994,
+                longitude: 113.344520,
+              }
+            ],
+            color:"#000000",
+            colorList:["#00FF00", "#0000ff"],
+            width: 10,
+            arrowLine: true,
+            borderColor: "#ff0000",
+            borderWidth: 2
+          }
+        ]
+        const polygons = [
+          {
+            points:[
+              {
+                latitude: 39.9442,
+                longitude: 116.514,
+              },
+              {
+                latitude: 39.9442,
+                longitude: 116.574,
+              }
+              ,{
+                latitude: 39.8642,
+                longitude: 116.574,
+              },
+              {
+                latitude: 39.8142,
+                longitude: 116.514,
+              }
+            ],
+            strokeWidth:3,
+            strokeColor:"#000000",
+            fillColor:"#ff000088",
+
+          },
+          {
+            points:[
+              {
+                latitude: 39.9342,
+                longitude: 116.514,
+              },
+              {
+                latitude: 39.9342,
+                longitude: 116.574,
+              }
+              ,{
+                latitude: 39.8542,
+                longitude: 116.574,
+              },
+              {
+                latitude: 39.8042,
+                longitude: 116.514,
+              }
+            ],
+            strokeWidth:3,
+            strokeColor:"#000000",
+            fillColor:"#ff008888",
+
+          }
+        ]
+        const circles = [
+          {
+            latitude: 39.8142,
+            longitude: 116.514,
+            color:"#000000",
+            fillColor:"#ff000099",
+            strokeWidth:3,
+            radius:100
+          },
+          {
+            latitude: 39.8242,
+            longitude: 116.414,
+            color:"#000000",
+            fillColor:"#ff990099",
+            strokeWidth:3,
+            radius:100
+          }
+        ]
+        // const controls = [
+        //   {
+        //     id:2,
+        //     position: {
+        //       left: 0,
+        //       top: 0,
+        //       width: 200,
+        //       height: 100,
+        //     },
+        //     iconPath: 'control.jpg',
+        //     clickable:true
+        //   }
+        // ]
+        console.log("mounted:",markers)
+        var params = {
+          mapId:this.mapId,
+          position: this.$el.getBoundingClientRect(),
+          state: {
+            longitude: this.longitude,
+            latitude: this.latitude,
+            scale: this.scale,
+            minScale: this.minScale,
+            maxScale: this.maxScale,
+            layerStyle:3,
+            markers: markers,
+            polyline:polyline,
+            polygons:polygons,
+            circles:circles,
+            // controls:controls,
+            rotate: this.rotate,
+            skew: this.skew
+          }
+        }
+        setTimeout(() => {
+          console.log(params)
+          this.mapId = createMap(params);
+        }, 100);
+      },
+      methods: {
+      },
+    })
+
+    Vue.component('my-map', component)
+
+    let app = new Vue({
+      el: "#app",
+      data: {
+        mapId:"myMap"
+      },
+      mounted() {
+
+      },
+      methods: {
+        operateMap(type, callback, params) {
+          params.operationType = type;
+          params.identifier = this.mapId;
+          params = {
+              // callback: callback,
+              data: params
+          }
+          if (callback) {
+            params.callback = callback;
+          }
+          window.__weappsNative.operateMapContext(JSON.stringify(params));
+        },
+        moveMarker(){
+          this.operateMap("translateMarker","",{
+            mapId:this.mapId,
+            markerId: 1,
+            autoRotate: true,
+            duration: 1000,
+            rotate:90,
+            moveWithRotate:true,
+            destination: {
+              latitude: 39.934083,
+              longitude: 116.306515,
+            }
+          });
+        },
+        moveAlong(){
+          this.operateMap("moveAlong","",{
+            mapId:this.mapId,
+            path:[
+              {
+                latitude: 23.098494,
+                longitude: 113.304520,
+              },
+              {
+                latitude: 23.099894,
+                longitude: 113.324520,
+              }
+              ,{
+                latitude: 23.099994,
+                longitude: 113.344520,
+              }
+            ],
+            markerId:1,
+            autoRotate:true,
+            duration: 1000
+          })
+        }
+      },
+      destroyed() {
+        
+      },
+    })
+
+  function createMap(params) {
+     window.__weappsNative.createMapContext(JSON.stringify(params));
+  }
+
+  </script>
+</body>
+</html>
