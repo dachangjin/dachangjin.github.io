@@ -1488,13 +1488,13 @@ while [ "$1" != "" ]; do
         archs )
             ARCHS="$value"
             ;;
-        debug )
-            if [ $value=="true" ] ; then
-                CONFIGRATION_TYPE='Debug'
-            else
-                CONFIGRATION_TYPE='Release'
-            fi
-            ;;
+#        debug )
+#            if [ $value=="true" ] ; then
+#                CONFIGRATION_TYPE='Debug'
+#            else
+#                CONFIGRATION_TYPE='Release'
+#            fi
+#            ;;
         keychain_pwd )
             UNLOCK_KEYCHAIN_PWD="$value"
             ;;
