@@ -414,6 +414,18 @@ function setProjectVersion () {
     fi
 }
 
+#设置Info.plist文件版本号
+function setBuildVersion () {
+    local infoPlistFile=$1
+    local buildVersion=$2
+    if [[ ! -f "$infoPlistFile" ]]; then
+        exit 1
+    fi
+    if [[ $projectVersion ]]; then
+        $CMD_PlistBuddy -c "Set :CFBundleVersion $buildVersion" "$infoPlistFile"
+    fi
+}
+
 #设置bundle display name
 function setBundleDisplayName () {
     local infoPlistFile=$1
@@ -1309,7 +1321,7 @@ PUBLIC_PATH='/Users/tommy/Desktop/Coding'
 ##工程目录
 PROJECT_PATH="${PUBLIC_PATH}/WeApps_iOS"
 ##输出ipa文件名
-IPA_FILE_NAME='Weapps'
+IPA_FILE_NAME='weapps'
 ##appid
 BUNDLE_ID='com.tencent.weapps1'
 ##appName
@@ -1320,6 +1332,8 @@ LOGO_PATH=''
 LAUNCH_IMAGE_PATH=''
 ##版本号
 PROJECT_VERSION='1.0'
+##编译版本号
+BUILD_VERSION='1.0'
 ##广告资源
 SPLASH_RESOURCE=''
 ##启动广告url
@@ -1414,13 +1428,19 @@ while [ "$1" != "" ]; do
             OUT_PUT_PATH="$value"
            ;;
         file_name )
-            IPA_FILE_NAME="$value"
+            if [ -n "$value" ];then
+                IPA_FILE_NAME="$value"
+            fi
             ;;
         appid )
-            BUNDLE_ID="$value"
+            if [ -n "$value" ];then
+                BUNDLE_ID="$value"
+            fi
             ;;
         name )
-            BUNDLE_DISPLAY_NAME="$value"
+            if [ -n "$value" ];then
+                BUNDLE_DISPLAY_NAME="$value"
+            fi
             ;;
         vendor_path )
             VENDOR_PATH="$value"
@@ -1432,7 +1452,14 @@ while [ "$1" != "" ]; do
             LAUNCH_IMAGE_PATH="$value"
             ;;
         version )
-            PROJECT_VERSION="$value"
+            if [ -n "$value" ];then
+                PROJECT_VERSION="$value"
+            fi
+            ;;
+        build_version )
+            if [ -n "$value" ];then
+                BUILD_VERSION="$value"
+            fi
             ;;
         cer_path )
             P12_PATH="$value"
@@ -1488,13 +1515,13 @@ while [ "$1" != "" ]; do
         archs )
             ARCHS="$value"
             ;;
-#        debug )
-#            if [ $value=="true" ] ; then
-#                CONFIGRATION_TYPE='Debug'
-#            else
-#                CONFIGRATION_TYPE='Release'
-#            fi
-#            ;;
+        debug )
+            if [ "$value" == "true" ] ; then
+                CONFIGRATION_TYPE='Debug'
+            else
+                CONFIGRATION_TYPE='Release'
+            fi
+            ;;
         keychain_pwd )
             UNLOCK_KEYCHAIN_PWD="$value"
             ;;
@@ -1678,6 +1705,9 @@ setBundleDisplayName "$infoPlistFile" "$BUNDLE_DISPLAY_NAME"
 #设置版本号
 setProjectVersion "$infoPlistFile" "$PROJECT_VERSION"
 
+#设置编译版本号
+setBuildVersion "$infoPlistFile" "$BUILD_VERSION"
+
 ### 获取debug 和 release 对应的 ConfigurationId
 debugConfigurationId=$(getConfigurationIdWithType "$xcodeprojPath" "$targetId" "Debug")
 releaseConfigurationId=$(getConfigurationIdWithType "$xcodeprojPath" "$targetId" "Release")
@@ -1692,16 +1722,10 @@ setCodeSignIdentifier "$xcodeprojPath" "$debugConfigurationId" "iPhone Developer
 setCodeSignIdentifier "$xcodeprojPath" "$releaseConfigurationId" "iPhone Distribution"
 
 
-#设置BundleId
-#NEW_BUNDLE_IDENTIFIER=setBundleId "$infoPlistFile" "$BUNDLE_ID"
-#logit "set bundleId done"
+
 
 ## 获取Bundle Id
-if [[ $NEW_BUNDLE_IDENTIFIER ]]; then
-#if [${#NEW_BUNDLE_IDENTIFIER} != 0]; then
-## 重新指定Bundle Id
-projectBundleId=$NEW_BUNDLE_IDENTIFIER
-elif [[ $BUNDLE_ID ]]; then
+if [[ $BUNDLE_ID ]]; then
 projectBundleId=$BUNDLE_ID
 else
 ## 获取工程中的Bundle Id
@@ -1711,43 +1735,6 @@ errorExit "获取项目的Bundle Id失败"
 fi
 fi
 logit "【构建信息】Bundle Id：$projectBundleId"
-
-
-
-### 设置git仓库版本数量
-#gitRepositoryVersionNumbers=$(getGitRepositoryVersionNumbers)
-#if [[ "$AUTO_BUILD_VERSION" == "YES" ]] && [[ "$gitRepositoryVersionNumbers" ]]; then
-#	setBuildVersion "$infoPlistFile" "$gitRepositoryVersionNumbers"
-#	if [[ $? -ne 0 ]]; then
-#		warning "设置构建版本号失败，跳过此设置"
-#	else
-#		logit "【构建信息】设置构建版本号：$gitRepositoryVersionNumbers"
-#	fi
-#fi
-
-
-
-## 设置环境变量
-#apiEnvFile=$(findIPAEnvFile "$API_ENV_FILE_NAME")
-#if [[ "$API_ENV_PRODUCTION" ]]; then
-#	if [[ "$apiEnvFile" ]]; then
-#		logit "【构建信息】API环境配置文件：$apiEnvFile"
-#		if [[ "$API_ENV_VARNAME" ]] ; then
-#			setIPAEnvFile "$apiEnvFile" "$API_ENV_VARNAME" "$API_ENV_PRODUCTION"
-#
-#			if [[ $? -ne 0 ]]; then
-#				warning "设置API环境变量失败，跳过此设置"
-#			else
-#				logit "【构建信息】设置API环境变量：$API_ENV_VARNAME = $API_ENV_PRODUCTION"
-#			fi
-#		fi
-#	fi
-#
-#fi
-
-
-###检查openssl
-#checkOpenssl
 
 
 logit "【构建信息】进行授权文件匹配..."
@@ -1848,7 +1835,7 @@ logit "【IPA 信息】IPA和日志重命名"
 exportDir=${exportPath%/*}
 
 if [ -z $IPA_FILE_NAME ]; then
-    IPA_FILE_NAME="$targetName"
+    IPA_FILE_NAME="weapps"
 fi
 logit "【IPA 信息】IPA路径:${exportDir}/${IPA_FILE_NAME}.ipa"
 logit "【IPA 信息】日志路径:${exportDir}/${IPA_FILE_NAME}.log"
