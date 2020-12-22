@@ -129,7 +129,7 @@ function getXcconfigValue() {
 	local xcconfigFile=$1
 	local key=$2
 	if [[ ! -f "$xcconfigFile" ]]; then
-		exit 1
+		exit 0
 	fi
 	## 去掉//开头 ;  查找key=特征，去掉双引号
 	local value=$(grep -v "[ ]*//" "$xcconfigFile" | grep -e "[ ]*$key[ ]*=" | tail -1| cut -d "=" -f2 | grep -o "[^ ]\+\( \+[^ ]\+\)*" | sed 's/\"//g' | sed "s/\'//g" ) 
@@ -351,7 +351,7 @@ function  checkPodfileExist() {
 
 	local podfile=$(find "$PROJECT_PATH" -maxdepth 1  -type f -iname "Podfile")
 	if [[ ! -f "$podfile" ]]; then
-		exit 1
+		exit 0
 	fi
 	echo $podfile
 }
@@ -427,59 +427,6 @@ function setBundleDisplayName () {
     fi
 }
 
-function finalIPAName ()
-{
-
-	local targetName=$1
-	local apiEnvFile=$2
-	local apiEnvVarName=$3
-	local infoPlistFile=$4
-	local channelName=$5
-
-	if [[ ! -f "$infoPlistFile" ]]; then
-		return;
-	fi
-		## IPA和日志重命名
-	local curDatte=`date +"%Y%m%d_%H%M%S"`
-	local ipaName=${targetName}_${curDatte}
-	local apiEnvValue=$(getIPAEnvValue "$apiEnvFile" "$apiEnvVarName")
-	local projectVersion=$(getProjectVersion "$infoPlistFile")
-	local buildVersion=$(getBuildVersion "$infoPlistFile")
-
-
-
-	if [[ "$apiEnvValue" ]]; then
-		local apiEnvName=''
-		if [[ "$apiEnvValue" == 'YES' ]]; then
-			apiEnvName='生产环境'
-		elif [[ "$apiEnvValue" == 'NO' ]]; then
-			apiEnvName='开发环境'
-		else
-			apiEnvName='未知环境'
-		fi
-		ipaName="$ipaName""_${apiEnvName}"
-	fi
-	ipaName="${ipaName}""_${channelName}""_${projectVersion}""(${buildVersion})"
-	echo "$ipaName"
-}
-
-
-##获取签名方式,##设置手动签名,即不勾选：Xcode -> General -> Signing -> Automatically manage signning
-## 在xcode 9之前（不包含9），只有在General这里配置是否手动签名，在xcode9之后，多加了一项在setting中
-function getCodeSigningStyle ()
-{
-
-	local pbxproj=$1/project.pbxproj
-	local targetId=$2
-	local rootObject=$($CMD_PlistBuddy -c "Print :rootObject" "$pbxproj")
-	if [[ ! -f "$pbxproj" ]]; then
-		exit 1
-	fi
-	##没有勾选过Automatically manage signning时，则不存在ProvisioningStyle
-	signingStyle=$($CMD_PlistBuddy -c "Print :objects:$rootObject:attributes:TargetAttributes:$targetId:ProvisioningStyle " "$pbxproj" 2>/dev/null)
-	echo $signingStyle
-
-}
 
 ##设置签名方式（手动/自动）,注意：如果项目存在中文文件名，使用PlistBuddy 命令对pbxproj文件进行修改导致乱码！该方法已被抛弃!
 function setManulCodeSigning ()
@@ -1813,22 +1760,22 @@ logit "【构建信息】Bundle Id：$projectBundleId"
 
 
 ## 设置环境变量
-apiEnvFile=$(findIPAEnvFile "$API_ENV_FILE_NAME")
-if [[ "$API_ENV_PRODUCTION" ]]; then
-	if [[ "$apiEnvFile" ]]; then
-		logit "【构建信息】API环境配置文件：$apiEnvFile"
-		if [[ "$API_ENV_VARNAME" ]] ; then
-			setIPAEnvFile "$apiEnvFile" "$API_ENV_VARNAME" "$API_ENV_PRODUCTION"
-
-			if [[ $? -ne 0 ]]; then
-				warning "设置API环境变量失败，跳过此设置"
-			else
-				logit "【构建信息】设置API环境变量：$API_ENV_VARNAME = $API_ENV_PRODUCTION"
-			fi
-		fi
-	fi
-
-fi
+#apiEnvFile=$(findIPAEnvFile "$API_ENV_FILE_NAME")
+#if [[ "$API_ENV_PRODUCTION" ]]; then
+#	if [[ "$apiEnvFile" ]]; then
+#		logit "【构建信息】API环境配置文件：$apiEnvFile"
+#		if [[ "$API_ENV_VARNAME" ]] ; then
+#			setIPAEnvFile "$apiEnvFile" "$API_ENV_VARNAME" "$API_ENV_PRODUCTION"
+#
+#			if [[ $? -ne 0 ]]; then
+#				warning "设置API环境变量失败，跳过此设置"
+#			else
+#				logit "【构建信息】设置API环境变量：$API_ENV_VARNAME = $API_ENV_PRODUCTION"
+#			fi
+#		fi
+#	fi
+#
+#fi
 
 
 ###检查openssl
@@ -1933,7 +1880,7 @@ logit "【IPA 信息】IPA和日志重命名"
 exportDir=${exportPath%/*}
 
 if [ -z $IPA_FILE_NAME ]; then
-    IPA_FILE_NAME=$(finalIPAName "$targetName" "$apiEnvFile" "$API_ENV_VARNAME" "$infoPlistFile" "$(getProfileTypeCNName $CHANNEL)")
+    IPA_FILE_NAME="$targetName"
 fi
 logit "【IPA 信息】IPA路径:${exportDir}/${IPA_FILE_NAME}.ipa"
 logit "【IPA 信息】日志路径:${exportDir}/${IPA_FILE_NAME}.log"
