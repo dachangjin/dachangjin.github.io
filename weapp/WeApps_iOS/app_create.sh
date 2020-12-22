@@ -1559,8 +1559,6 @@ copyVendorToProject "$VENDOR_PATH" "$PROJECT_PATH" "$PUBLIC_PATH"
 
 copyH5File "$WEB_CODE_PATH" "$PROJECT_PATH"
 
-
-
 unlockKeychain
 if [[ $? -eq 0 ]]; then
     logit "【钥匙串 】unlock-keychain";
@@ -1569,6 +1567,8 @@ else
 fi
 
 loadP12ToKeychain
+
+downloadProvision
 
 ### Xcode版本
 xcVersion=$(getXcodeVersion)
