@@ -1498,39 +1498,7 @@ while [ "$1" != "" ]; do
         keychain_pwd )
             UNLOCK_KEYCHAIN_PWD="$value"
             ;;
-        -v | --verbose )
-            VERBOSE=true
-            ;;
-        -V | --version )
-            generalAPPCreateShellVersion
-            ;;
-         -x )
-            set -x;;
-        --show-profile-detail )
-            getProfileInfo "$value"
-            exit;
-            ;;
-          --enable-bitcode )
-            ENABLE_BITCODE='YES'
-            ;;
-          --auto-buildversion )
-            AUTO_BUILD_VERSION='YES'
-            ;;
-          --env-filename )
-            API_ENV_FILE_NAME="$value"
-            ;;
-        --env-varname)
-            API_ENV_VARNAME="$value"
-            ;;
-        --env-production)
-            API_ENV_PRODUCTION="$value"
-            ;;
-        -h | --help )
-            usage
-            ;;
         * )
-            usage
-            ;;
     esac
 
     shift
