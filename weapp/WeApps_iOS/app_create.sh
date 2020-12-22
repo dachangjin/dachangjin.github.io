@@ -236,7 +236,7 @@ function generateOptionsPlist(){
 	</plist>\n
 	"
 	## 重定向
-	echo -e "$plistfileContent" > "$Tmp_Options_Plist_File"
+	echo "$plistfileContent" > "$Tmp_Options_Plist_File"
 	echo "$Tmp_Options_Plist_File"
 }
 
