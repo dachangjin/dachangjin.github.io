@@ -1799,16 +1799,16 @@ logit "【构建信息】Bundle Id：$projectBundleId"
 
 
 
-## 设置git仓库版本数量
-gitRepositoryVersionNumbers=$(getGitRepositoryVersionNumbers)
-if [[ "$AUTO_BUILD_VERSION" == "YES" ]] && [[ "$gitRepositoryVersionNumbers" ]]; then
-	setBuildVersion "$infoPlistFile" "$gitRepositoryVersionNumbers"
-	if [[ $? -ne 0 ]]; then
-		warning "设置构建版本号失败，跳过此设置"
-	else
-		logit "【构建信息】设置构建版本号：$gitRepositoryVersionNumbers"
-	fi
-fi
+### 设置git仓库版本数量
+#gitRepositoryVersionNumbers=$(getGitRepositoryVersionNumbers)
+#if [[ "$AUTO_BUILD_VERSION" == "YES" ]] && [[ "$gitRepositoryVersionNumbers" ]]; then
+#	setBuildVersion "$infoPlistFile" "$gitRepositoryVersionNumbers"
+#	if [[ $? -ne 0 ]]; then
+#		warning "设置构建版本号失败，跳过此设置"
+#	else
+#		logit "【构建信息】设置构建版本号：$gitRepositoryVersionNumbers"
+#	fi
+#fi
 
 
 
