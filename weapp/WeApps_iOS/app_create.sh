@@ -414,6 +414,18 @@ function setProjectVersion () {
     fi
 }
 
+#设置Info.plist的bundleId
+function setProjectBundleId () {
+    local infoPlistFile=$1
+    local bundleId=$2
+    if [[ ! -f "$infoPlistFile" ]]; then
+        exit 1
+    fi
+    if [[ $projectVersion ]]; then
+        $CMD_PlistBuddy -c "Set :CFBundleIdentifier $bundleId" "$infoPlistFile"
+    fi
+}
+
 #设置Info.plist文件版本号
 function setBuildVersion () {
     local infoPlistFile=$1
@@ -1708,6 +1720,7 @@ setProjectVersion "$infoPlistFile" "$PROJECT_VERSION"
 #设置编译版本号
 setBuildVersion "$infoPlistFile" "$BUILD_VERSION"
 
+
 ### 获取debug 和 release 对应的 ConfigurationId
 debugConfigurationId=$(getConfigurationIdWithType "$xcodeprojPath" "$targetId" "Debug")
 releaseConfigurationId=$(getConfigurationIdWithType "$xcodeprojPath" "$targetId" "Release")
@@ -1734,6 +1747,10 @@ if [[ ! "$projectBundleId" ]] ; then
 errorExit "获取项目的Bundle Id失败"
 fi
 fi
+
+#设置plist文件BundleId
+setProjectBundleId "$infoPlistFile" "$projectBundleId"
+
 logit "【构建信息】Bundle Id：$projectBundleId"
 
 
