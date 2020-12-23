@@ -421,7 +421,7 @@ function setProjectBundleId () {
     if [[ ! -f "$infoPlistFile" ]]; then
         exit 1
     fi
-    if [[ $projectVersion ]]; then
+    if [[ $bundleId ]]; then
         $CMD_PlistBuddy -c "Set :CFBundleIdentifier $bundleId" "$infoPlistFile"
     fi
 }
@@ -433,7 +433,7 @@ function setBuildVersion () {
     if [[ ! -f "$infoPlistFile" ]]; then
         exit 1
     fi
-    if [[ $projectVersion ]]; then
+    if [[ $buildVersion ]]; then
         $CMD_PlistBuddy -c "Set :CFBundleVersion $buildVersion" "$infoPlistFile"
     fi
 }
