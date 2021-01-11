@@ -29,15 +29,15 @@
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>cn.zhixl.guanxin</string>
+				<string>cn.zhixl.testAutoPackage</string>
 				<key>bundle-version</key>
-				<string>1.0.2</string>
+				<string>1.0</string>
 				<key>kind</key>
 				<string>software</string>
 				<key>platform-identifier</key>
 				<string>com.apple.platform.iphoneos</string>
 				<key>title</key>
-				<string>众享安康</string>
+				<string>weapps</string>
 			</dict>
 		</dict>
 	</array>
