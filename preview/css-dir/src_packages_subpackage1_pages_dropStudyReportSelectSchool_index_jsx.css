@@ -1,0 +1,114 @@
+.wa-comp-WeApps_STD_COMP-RadioGroup {
+  text-align: left;
+}
+
+.wa-comp-WeApps_STD_COMP-Radio .t3 {
+  font-size: 1.07143rem;
+  line-height: 1.71429rem;
+}
+.wa-comp-WeApps_STD_COMP-Radio .t6 {
+  font-size: 1rem;
+  line-height: 1.28571rem;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio {
+  width: 100%;
+  margin: 0.85714rem 0;
+  display: inline-block;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .zw-radio-container {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .zw-radio-container-line {
+  padding: 0.64286rem 0;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .zw-radio-container-line::after {
+  height: 1PX;
+  width: 100%;
+  transform: scaleY(0.5);
+  left: 0;
+  right: 0;
+  content: '';
+  position: absolute;
+  background-color: #EBEBEB;
+  bottom: 0;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-icon {
+  display: inline-block;
+  width: 1.71429rem;
+  height: 1.71429rem;
+  flex-shrink: 0;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-icon-item {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.07143rem solid #ccc;
+  box-sizing: border-box;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-icon-checked {
+  border-color: #2e82f9;
+  background-color: #2e82f9;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-icon-disabled {
+  border-color: #c0d4ee;
+  background-color: #c0d4ee;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-icon-uncheck {
+  border-color: #ccc;
+  background-color: #FAFAFA;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-icon-checked::after,
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-icon-disabled::after {
+  position: absolute;
+  content: ' ';
+  display: block;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(50%, 50%);
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-text {
+  margin-left: 0.35714rem;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-text .label {
+  font-size: 1.07143rem;
+  line-height: 1.71429rem;
+  color: #000000;
+  letter-spacing: 0;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio .check-text .desc {
+  font-size: 1rem;
+  line-height: 1.28571rem;
+  display: block;
+  margin-top: 0.10714rem;
+  color: #CCC;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio_disabled .check-icon-checked {
+  border-color: transparent;
+  background-color: rgba(0, 3, 56, 0.08);
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio_disabled .check-icon-checked:after {
+  background-color: #C0C5CA;
+}
+.wa-comp-WeApps_STD_COMP-Radio.zw-radio_disabled .check-icon-uncheck {
+  border-color: transparent;
+  background-color: rgba(0, 3, 56, 0.08);
+}
+
